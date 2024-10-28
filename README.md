@@ -1,16 +1,10 @@
-# riotappv2
+# 🎮 RiotApp V2
 
-A new Flutter project.
+## 📖 Proje Açıklaması
+**RiotApp V2**, League of Legends evreninden karakterleri tanımanızı sağlayan eğlenceli ve öğretici bir görsel tanıma oyunu sunmaktadır. Bu uygulama, oyunculara sadece karakterleri tanıtmakla kalmaz, aynı zamanda onlara zorlu görevler ve eğlenceli bir deneyim sunar. 
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚀 Özellikler
+- **Resim Mücadelesi**: İki karakter arasında karşılaştırma yaparak hangi karakterlerin hangi özelliklere sahip olduğunu keşfetme fırsatı.
+- **Karakter Avı**: Belirli karakterleri bulmak için verilen ipuçlarını kullanarak sürükleyici bir araştırma deneyimi.
+  
+Her iki mod da, kullanıcıların karakter bilgilerini geliştirmelerine yardımcı olurken, aynı zamanda oyun deneyimlerini daha da zenginleştirir!
