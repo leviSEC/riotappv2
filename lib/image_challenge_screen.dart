@@ -20,6 +20,8 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
   String? _selectedAnswer; // Kullanıcının seçtiği cevap.
   bool _isAnswerCorrect = false; // Cevabın doğru olup olmadığını kontrol eden bayrak.
   bool _isButtonEnabled = true; // Buton durumunu kontrol eden bayrak.
+  int _difficultyLevel = 1; // Başlangıç zorluk seviyesi
+  int _correctAnswersCount = 0; // Doğru cevap sayısı
 
   // Buton animasyon kontrolörü ve animasyon değişkenleri
   late AnimationController _buttonController;
@@ -87,8 +89,10 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
     img.Image? image2 = img.decodeImage(response2.bodyBytes); // İkinci resmi decode et.
 
     if (image1 != null && image2 != null) {
-      img.Image blurredImage1 = img.gaussianBlur(image1, 3); // İlk resmi bulanıklaştır.
-      img.Image blurredImage2 = img.gaussianBlur(image2, 3); // İkinci resmi bulanıklaştır.
+      // Zorluk seviyesine göre bulanıklığı artır
+      int blurAmount = 2 + _difficultyLevel; // 2 başlangıç, her doğru cevapta artacak
+      img.Image blurredImage1 = img.gaussianBlur(image1, blurAmount); // İlk resmi bulanıklaştır.
+      img.Image blurredImage2 = img.gaussianBlur(image2, blurAmount); // İkinci resmi bulanıklaştır.
 
       int width = max(blurredImage1.width, blurredImage2.width); // Genişlik.
       int height = max(blurredImage1.height, blurredImage2.height); // Yükseklik.
@@ -97,14 +101,16 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
       combinedImage.fill(0xFFFFFFFF); // Arka planı beyaz yap.
 
       // Piksel piksel karıştırma işlemi
+      double mixRatio = 0.4;
       for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
           int color1 = (x < blurredImage1.width && y < blurredImage1.height) ? blurredImage1.getPixel(x, y) : 0xFFFFFFFF;
           int color2 = (x < blurredImage2.width && y < blurredImage2.height) ? blurredImage2.getPixel(x, y) : 0xFFFFFFFF;
-          int mixedColor = _mixColors(color1, color2); // Renkleri karıştır.
-          combinedImage.setPixel(x, y, mixedColor); // Birleşik resme piksel ekle.
+          int mixedColor = _mixColors(color1, color2, mixRatio); // Üçüncü argümanı ekle
+          combinedImage.setPixel(x, y, mixedColor); // Birleşik resme piksel ekle
         }
       }
+
 
       _combinedImageBytes = Uint8List.fromList(img.encodePng(combinedImage)); // Birleşik resmi byte dizisine çevir.
       setState(() {
@@ -117,20 +123,30 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
   }
 
   // İki rengi karıştıran fonksiyon
-  int _mixColors(int color1, int color2) {
+  int _mixColors(int color1, int color2, double ratio) {
+    // Renk bileşenlerini al
     int r1 = img.getRed(color1);
     int g1 = img.getGreen(color1);
     int b1 = img.getBlue(color1);
+    int a1 = img.getAlpha(color1); // Alpha bileşeni
+
     int r2 = img.getRed(color2);
     int g2 = img.getGreen(color2);
     int b2 = img.getBlue(color2);
+    int a2 = img.getAlpha(color2); // Alpha bileşeni
 
-    int r = ((r1 + r2) / 2).round(); // Kırmızı renk değeri.
-    int g = ((g1 + g2) / 2).round(); // Yeşil renk değeri.
-    int b = ((b1 + b2) / 2).round(); // Mavi renk değeri.
+    // Karıştırma oranını sınırlandır
+    ratio = ratio.clamp(0.0, 1.0); // 0.0 ile 1.0 arasında sınırla
 
-    return img.getColor(r, g, b); // Karıştırılmış rengi döndür.
+    // Renk bileşenlerini karıştır
+    int r = ((r1 * (1 - ratio) + r2 * ratio)).round().clamp(0, 255);
+    int g = ((g1 * (1 - ratio) + g2 * ratio)).round().clamp(0, 255);
+    int b = ((b1 * (1 - ratio) + b2 * ratio)).round().clamp(0, 255);
+    int a = ((a1 * (1 - ratio) + a2 * ratio)).round().clamp(0, 255); // Alpha karışımı
+
+    return img.getColor(r, g, b, a); // Karıştırılmış rengi döndür.
   }
+
 
   // Cevap seçeneklerini oluşturan fonksiyon
   void _buildAnswerOptions(String name1, String name2) {
@@ -160,18 +176,20 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
       _isAnswerCorrect = selectedAnswer == _correctAnswer; // Cevabın doğru olup olmadığını kontrol et.
 
       // Buton animasyonunu başlat
-      if (_isAnswerCorrect) {
-        _buttonController.forward().then((_) {
-          _buttonController.reverse();
-        });
-      } else {
-        _buttonController.forward().then((_) {
-          _buttonController.reverse();
-        });
-      }
+      _buttonController.forward().then((_) {
+        _buttonController.reverse();
+      });
 
       // Butonları devre dışı bırak
       _isButtonEnabled = false;
+
+      if (_isAnswerCorrect) {
+        _correctAnswersCount++; // Doğru cevap sayısını artır
+        _difficultyLevel++; // Zorluk seviyesini artır
+      } else {
+        _correctAnswersCount = 0; // Yanlış cevap verildiğinde sayaç sıfırlanır
+        _difficultyLevel = 1; // Zorluk seviyesi sıfırlanır
+      }
     });
 
     // 3 saniye bekledikten sonra yeni girdiye izin ver
@@ -182,6 +200,9 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
 
       // Eğer cevap doğruysa, beklemeden sonra yeni bir soru yükle
       if (_isAnswerCorrect) {
+        _combineImages(); // Yeni resim kombinasyonu oluştur.
+      } else {
+        // Yanlış cevap verildiğinde yeni bir soru yükle
         _combineImages(); // Yeni resim kombinasyonu oluştur.
       }
     });
@@ -216,7 +237,7 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
                   ),
                   SizedBox(height: 20),
                   Text(
-                    'Bu karışım hangi iki karakterden oluşuyor?', // Soruyu göster
+                    'Tahmin Et: Hangi İkili?', // Soruyu göster
                     style: TextStyle(
                       fontSize: 24,
                       color: Colors.white,
@@ -231,7 +252,16 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 1),
+                  // Sayaç değeri burada gösterilir
+                  Text(
+                    'Doğru Cevap Sayısı: $_correctAnswersCount',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 1),
                   Column(
                     children: _answerOptions.map((option) { // Cevap seçeneklerini göster
                       return Padding(
