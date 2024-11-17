@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'image_challenge_screen.dart'; // Resim mücadelesi ekranını içe aktarıyoruz
+import 'character_hunt_screen.dart'; // Karakter Avı ekranını içe aktarıyoruz
 
 class MainMenu extends StatefulWidget {
   @override
@@ -61,7 +62,10 @@ class _MainMenuState extends State<MainMenu> {
                 'Karakter Avı',
                 Colors.deepPurpleAccent,
                     () {
-                  // Karakter Avı ekranına yönlendirme
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CharacterHuntScreen()), // Karakter Avı ekranına git
+                      );//
                 },
                 scaleFactor: _scaleFactor2,
                 onScaleChanged: (scale) {
