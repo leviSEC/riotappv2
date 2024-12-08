@@ -9,16 +9,29 @@ class CharacterHuntScreen extends StatefulWidget {
 
 class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
   List<CharacterQuestion> questions = [
-    CharacterQuestion("Bu Savaş Benim Başyapıtım Olacak.", "Aatrox"),
-    CharacterQuestion("Göklerin temsilcisi olmayı istiyorsan,inanman yeter.", "Aphelios"),
-    CharacterQuestion("Merhamet Dilenmek İçin Çok Geç.", "Ahri"),
-    CharacterQuestion("Böylesine değişken bir kainatta, bu kadar durağan bir dünya içimi rahatlatıyor.", "Aurelion Sol"),
-    CharacterQuestion("Shurima’sız bir gelecek düşünülemez.", "Azir"),
-    CharacterQuestion("Burası fazla mı ısındı yoksa ben mi çok ateşliyim.", "Brand"),
-    CharacterQuestion("Bazen donmuş bir yürek, sıcak bir tebessümle çözünür.", "Braum"),
-
-
-    // Diğer soruları buraya ekleyin
+    CharacterQuestion("Bu savaş benim başyapıtım olacak.", "Aatrox"),
+    CharacterQuestion("Bana güvenmiyor musun?", "Ahri"),
+    CharacterQuestion("Soraka acımızı biliyor, ama hissetmememizi, özümüzü inkar etmemizi söylüyor.", "Aphelios"),
+    CharacterQuestion("İmparatorunuz geri dönecek.", "Azir"),
+    CharacterQuestion("Replikleri sadece ses efektlerinden oluşmaktadır.", "Bard"),
+    CharacterQuestion("Gaza geldim, hizmete hazırım.", "Blitzcrank"),
+    CharacterQuestion("Dünyayı ateşe vermeye hazır mısın? Heh heh.", "Brand"),
+    CharacterQuestion("Cesur ol.", "Braum"),
+    CharacterQuestion("Bu iş tam benlik.", "Caitlyn"),
+    CharacterQuestion("Gelişim asla bekletilmemeli.", "Camille"),
+    CharacterQuestion("Bildiğim dünyanın son bulmasını istiyorsun, evet!", "Cho’Gath"),
+    CharacterQuestion("Göreve hazırım. Uçağım da yıkılıyor!", "Corki"),
+    CharacterQuestion("Onları yoluma çıktıklarına pişman edeceğim.", "Darius"),
+    CharacterQuestion("Yeni bir ay doğuyor.", "Diana"),
+    CharacterQuestion("Mundo istediği yere gider.", "Dr.Mundo"),
+    CharacterQuestion("Geri çekil, kimi öldürüyoruz? İşimi seviyorum. Hah hah", "Draven"),
+    CharacterQuestion("Iıı şey. Havalarda bir tuhaf bu aralar. Bildiğin robot olmuşsun ya.", "Ekko"),
+    CharacterQuestion("Onları ağıma düşüreceğim.", "Elise"),
+    CharacterQuestion("Vahşetin ortasında şafak vakti açmış bir çiçek gibi ışıldıyorum.", "Jhin"),
+    CharacterQuestion("Wujuu benden sorulur.", "Master Yi"),
+    CharacterQuestion("Düşmandan yüz çevirmek korkaklıktır.", "Tryndamere"),
+    CharacterQuestion("Ölümde rüzgar gibi, hep yanı başımda.", "Yasuo"),
+    CharacterQuestion("Kardeşim, yollarımız yine kesişti. Kılıçlarımız da kesişecek mi?", "Yone"),
   ];
 
   List<String> champions = [
@@ -44,10 +57,10 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
   ];
 
   List<List<String>> shuffledAnswers = [];
-  int _correctAnswerCount = 0; // Doğru cevap sayısını tutacak değişken
+  int _correctAnswerCount = 0;
   int currentQuestionIndex = 0;
   int score = 0;
-  int timeLeft = 10; // Her soru için 10 saniye
+  int timeLeft = 10;
   Timer? timer;
 
   void startTimer() {
@@ -67,18 +80,17 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
   void answerQuestion(int selectedIndex) {
     timer?.cancel();
     setState(() {
-      // Doğru cevabı kontrol et
       if (shuffledAnswers[currentQuestionIndex][selectedIndex] == questions[currentQuestionIndex].correctAnswer) {
         score++;
-        _correctAnswerCount++; // Doğru cevap sayısını artır
+        _correctAnswerCount++;
       }
 
       if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
+        shuffleAnswers();
       } else {
         _showResult();
       }
-      shuffleAnswers(); // Cevapları karıştır
       startTimer();
     });
   }
@@ -87,8 +99,9 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text("Oyun Bitti", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        content: Text("Toplam Puanınız: $score/${questions.length}", style: TextStyle(fontSize: 20)),
+        backgroundColor: Colors.blue[800],
+        title: Text("Oyun Bitti", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+        content: Text("Toplam Puanınız: $score/${questions.length}", style: TextStyle(fontSize: 20, color: Colors.white)),
         actions: [
           TextButton(
             onPressed: () {
@@ -96,12 +109,12 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
               setState(() {
                 currentQuestionIndex = 0;
                 score = 0;
-                _correctAnswerCount = 0; // Doğru cevap sayısını sıfırla
-                shuffleAnswers(); // Cevapları karıştır
+                _correctAnswerCount = 0;
+                shuffleAnswers();
                 startTimer();
               });
             },
-            child: Text("Yeniden Oyna", style: TextStyle(color: Colors.blue)),
+            child: Text("Yeniden Oyna", style: TextStyle(color: Colors.blue[200])),
           ),
         ],
       ),
@@ -113,16 +126,14 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
       String correctAnswer = q.correctAnswer;
       List<String> answers = [correctAnswer];
 
-      // Rastgele 3 farklı yanlış şampiyon ekle
       while (answers.length < 4) {
         String randomChampion;
         do {
           randomChampion = champions[Random().nextInt(champions.length)];
-        } while (answers.contains(randomChampion) || randomChampion == correctAnswer); // Aynı cevabı ekleme
-
+        } while (answers.contains(randomChampion) || randomChampion == correctAnswer);
         answers.add(randomChampion);
       }
-      answers.shuffle(Random()); // Cevapları karıştır
+      answers.shuffle(Random());
       return answers;
     }).toList();
   }
@@ -130,73 +141,80 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
   @override
   void initState() {
     super.initState();
-    shuffleAnswers(); // Oyun başladığında cevapları karıştır
+    questions.shuffle(); // Soruları karıştır
+    shuffleAnswers();
     startTimer();
   }
 
   @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    List<String> currentAnswers = shuffledAnswers[currentQuestionIndex]; // Rastgele cevapları al
-
     return Scaffold(
+      backgroundColor: Colors.blue[50],
       appBar: AppBar(
-        title: Text("Karakter Avı", style: TextStyle(fontSize: 24)),
-        backgroundColor: Colors.deepPurple,
+        title: Text('Karakter Avı', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.blue[800],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.deepPurple[400]!, Colors.blue[300]!],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Doğru cevap sayısını göster
-              Text(
-                'Doğru Cevap Sayısı: $_correctAnswerCount',
-                style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 20),
-              Text(
-                questions[currentQuestionIndex].questionText,
-                style: TextStyle(fontSize: 24, color: Colors.white),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 20),
-              Text("Kalan Süre: $timeLeft", style: TextStyle(fontSize: 20, color: Colors.yellowAccent)),
-              SizedBox(height: 20),
-              ...currentAnswers.asMap().entries.map((entry) {
-                int index = entry.key;
-                String answer = entry.value;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white, // buton arka plan rengi
-                      foregroundColor: Colors.black, // buton metin rengi
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      elevation: 5,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Sorular: ${currentQuestionIndex + 1}/${questions.length}",
+                  style: TextStyle(fontSize: 18, color: Colors.blue[800], fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Doğru Cevaplar: $_correctAnswerCount",
+                  style: TextStyle(fontSize: 18, color: Colors.blue[800], fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Card(
+              color: Colors.white,
+              elevation: 8,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      questions[currentQuestionIndex].question,
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blue[800]),
                     ),
-                    onPressed: () => answerQuestion(index),
-                    child: Text(answer, style: TextStyle(fontSize: 18)),
-                  ),
-                );
-              }).toList(),
-            ],
-          ),
+                    SizedBox(height: 20),
+                    for (int i = 0; i < shuffledAnswers[currentQuestionIndex].length; i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ElevatedButton(
+                          onPressed: () => answerQuestion(i),
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 20.0),
+                            backgroundColor: Colors.blue[600], // Butonun arka plan rengi
+                            foregroundColor: Colors.white, // Butonun metin rengi
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            shuffledAnswers[currentQuestionIndex][i],
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    SizedBox(height: 20),
+                    Text(
+                      "Süre: $timeLeft saniye",
+                      style: TextStyle(fontSize: 16, color: Colors.blue[800]),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -204,8 +222,8 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
 }
 
 class CharacterQuestion {
-  String questionText;
-  String correctAnswer;
+  final String question;
+  final String correctAnswer;
 
-  CharacterQuestion(this.questionText, this.correctAnswer);
+  CharacterQuestion(this.question, this.correctAnswer);
 }

@@ -212,7 +212,7 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Resim Mücadelesi'), // Uygulama başlığı
+        title: Text('Resim Mücadelesi', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)), // Uygulama başlığı
         backgroundColor: Colors.blueAccent, // Uygulama çubuğu rengi
       ),
       body: Container(
