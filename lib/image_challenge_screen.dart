@@ -6,6 +6,10 @@ import 'dart:math'; // Rastgele sayılar için gerekli kütüphane.
 import 'package:image/image.dart' as img; // Resim işleme için gerekli kütüphane.
 
 class ImageChallengeScreen extends StatefulWidget {
+  final bool isDarkMode;
+
+  ImageChallengeScreen({required this.isDarkMode});
+
   @override
   _ImageChallengeScreenState createState() => _ImageChallengeScreenState();
 }
@@ -211,14 +215,17 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: widget.isDarkMode ? Colors.blueGrey[900] : Colors.blue[800], // Arka planı gradyanla uyumlu yap
       appBar: AppBar(
-        title: Text('Resim Mücadelesi', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)), // Uygulama başlığı
-        backgroundColor: Colors.blueAccent, // Uygulama çubuğu rengi
+        title: Text('Resim Mücadelesi', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        backgroundColor: widget.isDarkMode ? Colors.blueGrey[900] : Colors.blueAccent,
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient( // Arka plan gradyanı
-            colors: [Colors.blue[800]!, Colors.blue[400]!],
+          gradient: LinearGradient(
+            colors: widget.isDarkMode
+                ? [Colors.blueGrey[900]!, Colors.blueGrey[700]!]
+                : [Colors.blue[800]!, Colors.blue[400]!],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -240,7 +247,7 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
                     'Tahmin Et: Hangi İkili?', // Soruyu göster
                     style: TextStyle(
                       fontSize: 24,
-                      color: Colors.white,
+                      color: widget.isDarkMode ? Colors.white70 : Colors.white,
                       fontWeight: FontWeight.bold,
                       shadows: [
                         Shadow(
@@ -258,7 +265,7 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
                     'Doğru Cevap Sayısı: $_correctAnswersCount',
                     style: TextStyle(
                       fontSize: 20,
-                      color: Colors.white,
+                      color: widget.isDarkMode ? Colors.white70 : Colors.white,
                     ),
                   ),
                   SizedBox(height: 1),
@@ -290,7 +297,7 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                               backgroundColor: _selectedAnswer == option
                                   ? (_isAnswerCorrect ? Colors.green : Colors.red)
-                                  : Colors.blueAccent,
+                                  : widget.isDarkMode ? Colors.blueGrey[600] : Colors.blueAccent,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),

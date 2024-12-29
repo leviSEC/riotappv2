@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
-import 'main_menu.dart'; // Ana menü ekranını içe aktarıyoruz
+import 'main_menu.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isDarkMode = false;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'League of Legends Quiz',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.black,
+      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
+      home: MainMenu(
+        isDarkMode: isDarkMode,
+        onThemeToggle: () {
+          setState(() {
+            isDarkMode = !isDarkMode;
+          });
+        },
       ),
-      home: MainMenu(), // Ana menü ekranını başlat
     );
   }
 }

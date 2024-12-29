@@ -3,6 +3,10 @@ import 'dart:async';
 import 'dart:math';
 
 class CharacterHuntScreen extends StatefulWidget {
+  final bool isDarkMode;
+
+  CharacterHuntScreen({required this.isDarkMode});
+
   @override
   _CharacterHuntScreenState createState() => _CharacterHuntScreenState();
 }
@@ -99,9 +103,15 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.blue[800],
-        title: Text("Oyun Bitti", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
-        content: Text("Toplam Puanınız: $score/${questions.length}", style: TextStyle(fontSize: 20, color: Colors.white)),
+        backgroundColor: widget.isDarkMode ? Colors.blueGrey[900] : Colors.blue[800],
+        title: Text(
+          "Oyun Bitti",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        content: Text(
+          "Toplam Puanınız: $score/${questions.length}",
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
         actions: [
           TextButton(
             onPressed: () {
@@ -149,10 +159,10 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[50],
+      backgroundColor: widget.isDarkMode ? Colors.grey[900] : Colors.blue[50],
       appBar: AppBar(
         title: Text('Karakter Avı', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.blue[800],
+        backgroundColor: widget.isDarkMode ? Colors.blueGrey[900] : Colors.blue[800],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -163,17 +173,33 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
               children: [
                 Text(
                   "Sorular: ${currentQuestionIndex + 1}/${questions.length}",
-                  style: TextStyle(fontSize: 18, color: Colors.blue[800], fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: widget.isDarkMode ? Colors.white70 : Colors.blue[800],
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   "Doğru Cevaplar: $_correctAnswerCount",
-                  style: TextStyle(fontSize: 18, color: Colors.blue[800], fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: widget.isDarkMode ? Colors.white70 : Colors.blue[800],
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
             SizedBox(height: 20),
+            // Zaman Çubuğu Eklendi
+            LinearProgressIndicator(
+              value: timeLeft / 10, // Toplam 10 saniyeye göre oran
+              backgroundColor: widget.isDarkMode ? Colors.grey[700] : Colors.blue[200],
+              color: timeLeft > 5 ? Colors.green : Colors.red, // Süreye göre renk değişimi
+              minHeight: 10,
+            ),
+            SizedBox(height: 20),
             Card(
-              color: Colors.white,
+              color: widget.isDarkMode ? Colors.grey[800] : Colors.white,
               elevation: 8,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               child: Padding(
@@ -183,7 +209,11 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
                   children: [
                     Text(
                       questions[currentQuestionIndex].question,
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blue[800]),
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: widget.isDarkMode ? Colors.white70 : Colors.blue[800],
+                      ),
                     ),
                     SizedBox(height: 20),
                     for (int i = 0; i < shuffledAnswers[currentQuestionIndex].length; i++)
@@ -193,7 +223,7 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
                           onPressed: () => answerQuestion(i),
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 20.0),
-                            backgroundColor: Colors.blue[600], // Butonun arka plan rengi
+                            backgroundColor: widget.isDarkMode ? Colors.blueGrey[700] : Colors.blue[600],
                             foregroundColor: Colors.white, // Butonun metin rengi
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -208,7 +238,10 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
                     SizedBox(height: 20),
                     Text(
                       "Süre: $timeLeft saniye",
-                      style: TextStyle(fontSize: 16, color: Colors.blue[800]),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: widget.isDarkMode ? Colors.white70 : Colors.blue[800],
+                      ),
                     ),
                   ],
                 ),
