@@ -18,7 +18,6 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
   List<String> _championImages = []; // Şampiyon resimlerini tutan liste.
   List<String> _championNames = []; // Şampiyon isimlerini tutan liste.
   Uint8List? _combinedImageBytes; // Birleşik resim verileri.
-  final String _apiKey = 'RGAPI-8eb51bdb-ea9a-408e-b56a-797aef4ffdf7'; // API anahtarı.
   String? _correctAnswer; // Doğru cevap.
   List<String> _answerOptions = []; // Cevap seçeneklerini tutan liste.
   String? _selectedAnswer; // Kullanıcının seçtiği cevap.
@@ -29,7 +28,6 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
 
   // Buton animasyon kontrolörü ve animasyon değişkenleri
   late AnimationController _buttonController;
-  late Animation<double> _buttonAnimation;
 
   @override
   void initState() {
@@ -40,9 +38,6 @@ class _ImageChallengeScreenState extends State<ImageChallengeScreen> with Single
     _buttonController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
-    );
-    _buttonAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
-      CurvedAnimation(parent: _buttonController, curve: Curves.easeInOut),
     );
   }
 

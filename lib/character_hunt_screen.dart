@@ -1,7 +1,9 @@
+// Gerekli Flutter ve Dart kütüphanelerini dahil ediyor
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 
+// Stateful widget tanımlaması
 class CharacterHuntScreen extends StatefulWidget {
   final bool isDarkMode;
 
@@ -11,8 +13,11 @@ class CharacterHuntScreen extends StatefulWidget {
   _CharacterHuntScreenState createState() => _CharacterHuntScreenState();
 }
 
+// Widget'in state sınıfı
 class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
+  // Soru ve cevapları tutan liste
   List<CharacterQuestion> questions = [
+    // Her bir karakter için soru ve doğru cevap
     CharacterQuestion("Bu savaş benim başyapıtım olacak.", "Aatrox"),
     CharacterQuestion("Bana güvenmiyor musun?", "Ahri"),
     CharacterQuestion("Soraka acımızı biliyor, ama hissetmememizi, özümüzü inkar etmemizi söylüyor.", "Aphelios"),
@@ -35,9 +40,20 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
     CharacterQuestion("Wujuu benden sorulur.", "Master Yi"),
     CharacterQuestion("Düşmandan yüz çevirmek korkaklıktır.", "Tryndamere"),
     CharacterQuestion("Ölümde rüzgar gibi, hep yanı başımda.", "Yasuo"),
-    CharacterQuestion("Kardeşim, yollarımız yine kesişti. Kılıçlarımız da kesişecek mi?", "Yone"),
+    CharacterQuestion("Havlayan köpek ısırmaz, hav hav hav", "Nasus"),
+    CharacterQuestion("Bir keresinde annemi susturmaya çalıştım çalışmaz olaydım.", "Kassadin"),
+    CharacterQuestion("Kaptan Teemo göreve hazır.", "Teemo"),
+    CharacterQuestion("En büyük sopaya sahip trol kral olur. Kural böyle!", "Trundle"),
+    CharacterQuestion("Al sana bir kaya, nereye dayarsan daya.", "Malphite"),
+    CharacterQuestion("Herkes bir gün ölümü tadacak, ama bazılarına biraz yardım gerek.", "Lucian"),
+    CharacterQuestion("Şimdi nerede kalmıştım? Ah, doğru ya, ortalığı kasıp kavuruyordum!", "Jinx"),
+    CharacterQuestion("Onlara su dolu bir mezar göstereceğim.", "Fizz"),
+    CharacterQuestion("Bıçakla yaşa ve öl.", "Talon"),
+    CharacterQuestion("Bazı şarkılar kafiyeyle başlar, bazıları ritimle... Benimki kalabalıkla başlar.", "Seraphine"),
+    CharacterQuestion("Her hata bir derstir.", "Wukong"),
   ];
 
+  // Şampiyon adlarını tutan liste
   List<String> champions = [
     "Aatrox", "Ahri", "Akali", "Alistar", "Amumu", "Anivia", "Annie", "Aphelios",
     "Ashe", "Aurelion Sol", "Azir", "Bard", "Bel'Veth", "Blitzcrank", "Brand", "Braum",
@@ -60,6 +76,7 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
     "Zilean", "Zoe", "Zyra"
   ];
 
+  // Karışık cevaplar ve oyun değişkenleri
   List<List<String>> shuffledAnswers = [];
   int _correctAnswerCount = 0;
   int currentQuestionIndex = 0;
@@ -67,6 +84,7 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
   int timeLeft = 10;
   Timer? timer;
 
+  // Zamanlayıcıyı başlatan fonksiyon
   void startTimer() {
     timeLeft = 10;
     timer?.cancel();
@@ -75,30 +93,36 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
         timeLeft--;
         if (timeLeft == 0) {
           t.cancel();
-          _showResult();
+          _showResult(); // Zaman bittiğinde sonucu göster
         }
       });
     });
   }
 
+  // Soruyu cevaplama fonksiyonu
   void answerQuestion(int selectedIndex) {
     timer?.cancel();
     setState(() {
       if (shuffledAnswers[currentQuestionIndex][selectedIndex] == questions[currentQuestionIndex].correctAnswer) {
         score++;
         _correctAnswerCount++;
-      }
 
-      if (currentQuestionIndex < questions.length - 1) {
-        currentQuestionIndex++;
-        shuffleAnswers();
+        // Eğer sorular bitmediyse sıradaki soruya geç
+        if (currentQuestionIndex < questions.length - 1) {
+          currentQuestionIndex++;
+          shuffleAnswers(); // Cevapları karıştır
+          startTimer(); // Yeni soru için zamanlayıcıyı başlat
+        } else {
+          _showResult(); // Tüm sorular tamamlandığında sonucu göster
+        }
       } else {
+        // Yanlış cevap verildiğinde oyunu bitir
         _showResult();
       }
-      startTimer();
     });
   }
 
+  // Sonuç ekranını gösteren fonksiyon
   void _showResult() {
     showDialog(
       context: context,
@@ -120,7 +144,7 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
                 currentQuestionIndex = 0;
                 score = 0;
                 _correctAnswerCount = 0;
-                shuffleAnswers();
+                shuffleAnswers(); // Cevapları yeniden karıştır
                 startTimer();
               });
             },
@@ -131,11 +155,13 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
     );
   }
 
+  // Cevapları karıştıran fonksiyon
   void shuffleAnswers() {
     shuffledAnswers = questions.map((q) {
       String correctAnswer = q.correctAnswer;
       List<String> answers = [correctAnswer];
 
+      // Yanlış cevaplar ekle
       while (answers.length < 4) {
         String randomChampion;
         do {
@@ -143,7 +169,7 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
         } while (answers.contains(randomChampion) || randomChampion == correctAnswer);
         answers.add(randomChampion);
       }
-      answers.shuffle(Random());
+      answers.shuffle(Random()); // Cevapları karıştır
       return answers;
     }).toList();
   }
@@ -152,8 +178,8 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
   void initState() {
     super.initState();
     questions.shuffle(); // Soruları karıştır
-    shuffleAnswers();
-    startTimer();
+    shuffleAnswers(); // Cevapları karıştır
+    startTimer(); // Zamanlayıcıyı başlat
   }
 
   @override
@@ -190,7 +216,7 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
               ],
             ),
             SizedBox(height: 20),
-            // Zaman Çubuğu Eklendi
+            // Zaman çubuğu
             LinearProgressIndicator(
               value: timeLeft / 10, // Toplam 10 saniyeye göre oran
               backgroundColor: widget.isDarkMode ? Colors.grey[700] : Colors.blue[200],
@@ -216,6 +242,7 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
+                    // Cevap seçenekleri
                     for (int i = 0; i < shuffledAnswers[currentQuestionIndex].length; i++)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -254,6 +281,7 @@ class _CharacterHuntScreenState extends State<CharacterHuntScreen> {
   }
 }
 
+// Soru ve doğru cevabı temsil eden model sınıf
 class CharacterQuestion {
   final String question;
   final String correctAnswer;

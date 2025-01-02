@@ -12,9 +12,7 @@ dependencies:
     sdk: flutter
   image_picker: ^0.8.6
   image: ^3.0.1
-  http: ^1.2.2
-
-
+  http: 0.13.6
 
   cupertino_icons: ^1.0.8
 
@@ -27,3 +25,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/lolquiz.png
+    - assets/images/
