@@ -110,7 +110,7 @@ class _ImageGuessGame2State extends State<ImageGuessGame2>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Resim Tahmini Modu 2"),
+        title: Text("Resim Tahmini Modu 2",style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor:
         widget.isDarkMode ? Colors.grey[900] : Colors.deepPurple,
